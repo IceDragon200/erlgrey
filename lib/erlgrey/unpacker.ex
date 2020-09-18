@@ -37,6 +37,10 @@ defmodule Erlgrey.Unpacker32 do
     {:ok, value, rest}
   end
 
+  def unpack(<<"L",0::big-signed-integer-size(32),rest::binary>>) do
+    {:ok, [], rest}
+  end
+
   def unpack(<<"L",size::big-signed-integer-size(32),rest::binary>>) do
     {list, rest} =
       Enum.reduce(capped_range(size), {[], rest}, fn _, {acc, rest} ->
@@ -49,6 +53,10 @@ defmodule Erlgrey.Unpacker32 do
     {:ok, Enum.reverse(list), rest}
   end
 
+  def unpack(<<"M",0::big-signed-integer-size(32),rest::binary>>) do
+    {:ok, %{}, rest}
+  end
+
   def unpack(<<"M",size::big-signed-integer-size(32),rest::binary>>) do
     {list, rest} =
       Enum.reduce(capped_range(size), {[], rest}, fn _, {acc, rest} ->
@@ -59,6 +67,10 @@ defmodule Erlgrey.Unpacker32 do
       end)
 
     {:ok, Enum.into(list, %{}), rest}
+  end
+
+  def unpack(<<"U",0::big-signed-integer-size(32),rest::binary>>) do
+    {:ok, {}, rest}
   end
 
   def unpack(<<"U",size::big-signed-integer-size(32),rest::binary>>) do
@@ -110,6 +122,11 @@ defmodule Erlgrey.Unpacker64 do
     {:ok, value, rest}
   end
 
+  def unpack(<<"L",0::big-signed-integer-size(64),rest::binary>>) do
+    # optimization for empty lists
+    {:ok, [], rest}
+  end
+
   def unpack(<<"L",size::big-signed-integer-size(64),rest::binary>>) do
     {list, rest} =
       Enum.reduce(capped_range(size), {[], rest}, fn _, {acc, rest} ->
@@ -122,6 +139,10 @@ defmodule Erlgrey.Unpacker64 do
     {:ok, Enum.reverse(list), rest}
   end
 
+  def unpack(<<"M",0::big-signed-integer-size(64),rest::binary>>) do
+    {:ok, %{}, rest}
+  end
+
   def unpack(<<"M",size::big-signed-integer-size(64),rest::binary>>) do
     {list, rest} =
       Enum.reduce(capped_range(size), {[], rest}, fn _, {acc, rest} ->
@@ -132,6 +153,10 @@ defmodule Erlgrey.Unpacker64 do
       end)
 
     {:ok, Enum.into(list, %{}), rest}
+  end
+
+  def unpack(<<"U",0::big-signed-integer-size(64),rest::binary>>) do
+    {:ok, {}, rest}
   end
 
   def unpack(<<"U",size::big-signed-integer-size(64),rest::binary>>) do
