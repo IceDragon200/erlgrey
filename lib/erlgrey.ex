@@ -25,7 +25,7 @@ defmodule Erlgrey do
   @type pack_option :: {:return, return_type}
 
   @doc """
-  Packs the given term as an erlgrey binary
+  Packs the given term as an erlgrey binary using a base size of 32bits for integers
   """
   @spec pack32(term, [pack_option]) :: iodata
   def pack32(value, options \\ []) do
@@ -34,6 +34,9 @@ defmodule Erlgrey do
     handle_pack(result, options)
   end
 
+  @doc """
+  Packs the given term as an erlgrey binary using a base size of 64bits for integers
+  """
   @spec pack64(term, [pack_option]) :: iodata
   def pack64(value, options \\ []) do
     result = Erlgrey.Packer64.pack(value)
@@ -41,10 +44,12 @@ defmodule Erlgrey do
     handle_pack(result, options)
   end
 
+  @spec unpack32(binary()) :: {:ok, term} | {:error, term}
   def unpack32(value) when is_binary(value) do
     Erlgrey.Unpacker32.unpack(value)
   end
 
+  @spec unpack32!(binary()) :: term
   def unpack32!(value) when is_binary(value) do
     case unpack32(value) do
       {:ok, value, _rest} ->
@@ -55,10 +60,12 @@ defmodule Erlgrey do
     end
   end
 
+  @spec unpack64(binary()) :: {:ok, term} | {:error, term}
   def unpack64(value) when is_binary(value) do
     Erlgrey.Unpacker64.unpack(value)
   end
 
+  @spec unpack64!(binary()) :: term
   def unpack64!(value) when is_binary(value) do
     case unpack64(value) do
       {:ok, value, _rest} ->
